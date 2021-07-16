@@ -5,6 +5,7 @@ license = "MIT"
 repository = "https://github.com/lukidoescode/css-in-rust"
 authors = [
     "Lukas Wagner <appdev.lukaswagner@gmail.com>",
+    "Martin Molzer <worldsbegin@gmx.de>",
 ]
 edition = "2018"
 description = "CSSinRust is a package for use with WASM applications providing a component level CSS styling experience."

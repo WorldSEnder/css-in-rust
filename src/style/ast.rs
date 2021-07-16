@@ -1,4 +1,5 @@
 // Copyright © 2020 Lukas Wagner
+use super::utils::Itertools;
 
 /// A scope represents a media query or all content not in a media query.
 ///
@@ -33,11 +34,9 @@ impl ToCss for Scope {
                 ScopeContent::Rule(rule) => rule.to_css(class_name.clone()),
                 // ScopeContent::Scope(scope) => scope.to_css(class_name.clone()),
             })
-            .fold(String::new(), |acc, css_part| {
-                format!("{}{}\n", acc, css_part)
-            });
+            .join("\n");
         match &self.condition {
-            Some(condition) => format!("{} {{\n{}}}", condition, stylesets_css),
+            Some(condition) => format!("{} {{\n{}\n}}", condition, stylesets_css),
             None => stylesets_css.trim().to_string(),
         }
     }
@@ -78,17 +77,15 @@ impl ToCss for Block {
             .clone()
             .into_iter()
             .map(|style_property| style_property.to_css(class_name.clone()))
-            .fold(String::new(), |acc, css_part| {
-                format!("{}\n{}", acc, css_part)
-            });
+            .join("\n");
         if condition.contains('&') {
             format!(
-                "{} {{{}\n}}",
+                "{} {{\n{}\n}}",
                 condition.replace("&", format!(".{}", class_name).as_str()),
                 style_property_css
             )
         } else {
-            format!(".{}{} {{{}\n}}", class_name, condition, style_property_css)
+            format!(".{}{} {{\n{}\n}}", class_name, condition, style_property_css)
         }
     }
 }
@@ -154,6 +151,12 @@ impl ToCss for RuleContent {
     }
 }
 
+impl Into<RuleContent> for String {
+    fn into(self) -> RuleContent {
+        RuleContent::String(self)
+    }
+}
+
 /// Structs implementing this trait should be able to turn into
 /// a part of a CSS style sheet.
 pub trait ToCss {
@@ -186,20 +189,20 @@ mod tests {
                 }),
                 ScopeContent::Rule(Rule {
                     condition: String::from("@keyframes move"),
-                    content: String::from(
+                    content: vec![String::from(
                         r#"from {
 width: 100px;
 }
 to {
 width: 200px;
 }"#,
-                    ),
+                    ).into()],
                 }),
             ],
         };
         assert_eq!(
             test_block.to_css(String::from("test")),
-            r#".test {
+r#".test {
 width: 100vw;
 }
 .test .inner {
@@ -237,14 +240,14 @@ width: 200px;
                 }),
                 ScopeContent::Rule(Rule {
                     condition: String::from("@keyframes move"),
-                    content: String::from(
+                    content: vec![String::from(
                         r#"from {
 width: 100px;
 }
 to {
 width: 200px;
 }"#,
-                    ),
+                    ).into()],
                 }),
             ],
         };
