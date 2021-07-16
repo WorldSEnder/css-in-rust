@@ -5,12 +5,12 @@
 //! yew component.
 
 use super::super::style::Style;
-use yew::virtual_dom::Classes;
+use yew::prelude::Classes;
 
 impl From<Style> for Classes {
     fn from(style: Style) -> Self {
         let mut classes = Self::new();
-        classes.push(style.get_class_name().as_str());
+        classes.push(style.get_class_name().to_string());
         classes
     }
 }
