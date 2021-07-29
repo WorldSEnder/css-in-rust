@@ -41,14 +41,7 @@ impl Style {
 
     /// Takes all Scopes and lets them translate themselves into CSS.
     fn generate_css(&self) -> String {
-        match &self.ast {
-            Some(ast) => ast
-                .clone()
-                .into_iter()
-                .map(|scope| scope.to_css(self.class_name.clone()))
-                .join("\n"),
-            None => String::new(),
-        }
+        self.ast.to_css(self.class_name.clone())
     }
 
     /// Generates the `<style/>` tag web-sys style for inserting into the head of the

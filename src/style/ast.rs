@@ -1,5 +1,6 @@
 // Copyright © 2020 Lukas Wagner
 use super::utils::Itertools;
+use std::convert::TryFrom;
 
 /// A scope represents a media query or all content not in a media query.
 ///
@@ -39,6 +40,36 @@ impl ToCss for Scope {
             Some(condition) => format!("{} {{\n{}\n}}", condition, stylesets_css),
             None => stylesets_css.trim().to_string(),
         }
+    }
+}
+
+impl Scopes {
+    /// Combine the two scopes by appending more rules to it
+    pub fn append(&mut self, other: Scopes) {
+        let mut other = other;
+        self.scopes.append(&mut other.scopes);
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct Scopes {
+    scopes: Vec<Scope>,
+}
+
+impl TryFrom<String> for Scopes {
+    type Error = String;
+    fn try_from(css: String) -> std::result::Result<Self, Self::Error> {
+        let scopes = crate::parser::Parser::parse(css)?;
+        Ok(Scopes { scopes })
+    }
+}
+
+impl ToCss for Scopes {
+    fn to_css(&self, class_name: String) -> String {
+        self.scopes
+            .iter()
+            .map(|scope| scope.to_css(class_name.clone()))
+            .join("\n")
     }
 }
 

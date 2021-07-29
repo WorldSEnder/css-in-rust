@@ -4,10 +4,10 @@ pub mod ast;
 mod arch;
 mod utils;
 
-use super::parser::Parser;
-use ast::Scope;
+use ast::Scopes;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
+use std::convert::TryInto;
 
 lazy_static! {
     static ref STYLE_REGISTRY: Arc<Mutex<StyleRegistry>> = Arc::new(Mutex::default());
@@ -36,7 +36,7 @@ pub struct Style {
     /// The designated class name of this style
     class_name: String,
     /// The abstract syntax tree of the css
-    ast: Option<Vec<Scope>>,
+    ast: Scopes,
     /// Style DOM node the data in this struct is turned into.
     node: arch::DomNode,
 }
@@ -50,11 +50,22 @@ impl Style {
         class_name: I1,
         css: I2,
     ) -> Result<Style, String> {
-        let (class_name, css) = (class_name.into(), css.into());
-        let ast = Parser::parse(css)?;
+        let ast = css.into().try_into()?;
+        Ok(Self::from_scopes(class_name, ast))
+    }
+
+    /// Creates a new style and, stores it into the registry and returns the
+    /// newly created style.
+    ///
+    /// This function will already mount the style to the HTML head for the browser to use.
+    pub fn from_scopes<I1: Into<String>>(
+        class_name: I1,
+        scopes: Scopes,
+    ) -> Style {
+        let class_name = class_name.into();
         let mut new_style = Self {
             class_name: format!("{}-{}", class_name, arch::classname_entropy()),
-            ast: Some(ast),
+            ast: scopes,
             node: Default::default(),
         };
         let style_registry_mutex = Arc::clone(&STYLE_REGISTRY);
@@ -66,7 +77,7 @@ impl Style {
             .styles
             .insert(new_style.class_name.clone(), new_style.clone());
         new_style = new_style.mount();
-        Ok(new_style)
+        new_style
     }
 
     pub fn get_class_name(self) -> String {
