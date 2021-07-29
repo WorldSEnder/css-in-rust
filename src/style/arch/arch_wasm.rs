@@ -1,4 +1,4 @@
-use super::super::{Style, ast::ToCss, utils::Itertools};
+use super::super::{Style, ast::ToCss};
 use web_sys::{Element, HtmlHeadElement};
 use wasm_bindgen::prelude::*;
 

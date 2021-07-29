@@ -19,7 +19,7 @@ use std::convert::TryFrom;
 /// }
 /// /* END Scope */
 /// ```
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub(crate) struct Scope {
     pub(crate) condition: Option<String>,
     pub(crate) stylesets: Vec<ScopeContent>,
@@ -51,7 +51,7 @@ impl Scopes {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Default, Eq, Hash)]
 pub struct Scopes {
     scopes: Vec<Scope>,
 }
@@ -74,7 +74,7 @@ impl ToCss for Scopes {
 }
 
 /// Everything that can reside inside a scope.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub(crate) enum ScopeContent {
     Block(Block),
     Rule(Rule),
@@ -91,7 +91,7 @@ pub(crate) enum ScopeContent {
 ///     color: red;
 /// }
 /// ```
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub(crate) struct Block {
     pub(crate) condition: Option<String>,
     pub(crate) style_attributes: Vec<StyleAttribute>,
@@ -124,7 +124,7 @@ impl ToCss for Block {
 /// A simple CSS proprerty in the form of a key value pair.
 ///
 /// E.g.: `color: red`
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub(crate) struct StyleAttribute {
     pub(crate) key: String,
     pub(crate) value: String,
@@ -139,7 +139,7 @@ impl ToCss for StyleAttribute {
 /// A rule is everything that does not contain any properties.
 ///
 /// An example would be `@keyframes`
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub(crate) struct Rule {
     pub(crate) condition: String,
     pub(crate) content: Vec<RuleContent>,
@@ -160,7 +160,7 @@ impl ToCss for Rule {
 }
 
 /// Everything that can be inside a rule.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub(crate) enum RuleContent {
     String(String),
     CurlyBraces(Vec<RuleContent>),

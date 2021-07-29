@@ -17,7 +17,7 @@ lazy_static! {
 /// Every style automatically registers with the style registry.
 #[derive(Debug, Clone)]
 struct StyleRegistry {
-    styles: HashMap<String, Style>,
+    styles: HashMap<Scopes, Style>,
 }
 
 impl Default for StyleRegistry {
@@ -62,22 +62,25 @@ impl Style {
         class_name: I1,
         scopes: Scopes,
     ) -> Style {
-        let class_name = class_name.into();
-        let mut new_style = Self {
-            class_name: format!("{}-{}", class_name, arch::classname_entropy()),
-            ast: scopes,
-            node: Default::default(),
-        };
         let style_registry_mutex = Arc::clone(&STYLE_REGISTRY);
         let mut style_registry = match style_registry_mutex.lock() {
             Ok(guard) => guard,
             Err(poisoned) => poisoned.into_inner(),
         };
-        (*style_registry)
+        let registered_style = (*style_registry)
             .styles
-            .insert(new_style.class_name.clone(), new_style.clone());
-        new_style = new_style.mount();
-        new_style
+            .entry(scopes.clone())
+            .or_insert_with(|| {
+                let class_name = class_name.into();
+                let mut new_style = Self {
+                    class_name: format!("{}-{}", class_name, arch::classname_entropy()),
+                    ast: scopes,
+                    node: Default::default(),
+                };
+                new_style = new_style.mount();
+                new_style
+            });
+        registered_style.clone()
     }
 
     pub fn get_class_name(self) -> String {
