@@ -41,7 +41,7 @@ impl Style {
 
     /// Takes all Scopes and lets them translate themselves into CSS.
     fn generate_css(&self) -> String {
-        self.ast.to_css(self.class_name.clone())
+        self.ast.to_css(&self.class_name)
     }
 
     /// Generates the `<style/>` tag web-sys style for inserting into the head of the
