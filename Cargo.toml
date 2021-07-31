@@ -38,6 +38,7 @@ features = [
     "HtmlElement",
     "HtmlHeadElement",
     "HtmlStyleElement",
+    "Crypto",
 ]
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]

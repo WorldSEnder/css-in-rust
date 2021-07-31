@@ -1,17 +1,31 @@
-use super::super::{Style, ast::ToCss};
-use web_sys::{Element, HtmlHeadElement};
+use super::super::{ast::ToCss, Style};
 use wasm_bindgen::prelude::*;
+use web_sys::{Element, HtmlHeadElement};
 
 pub type DomNode = Option<Element>;
 
-#[wasm_bindgen]
+/*#[wasm_bindgen]
 extern "C" {
+    #[wasm_bindgen (extends = ::js_sys::Object, js_name = Crypto, typescript_type = "Crypto")]
+    #[derive(Debug, Clone, PartialEq, Eq)]
+    pub type Crypto;
+
     #[wasm_bindgen(js_namespace = Math)]
     fn random() -> f64;
-}
+}*/
 
 pub fn classname_entropy() -> impl std::fmt::Display {
-    random().to_bits()
+    let window = web_sys::window().expect("no global `window` exists");
+    let crypto = window.crypto().expect("no crypto exists");
+    let mut random_bits = [0u8; 8];
+    let _ = crypto
+        .get_random_values_with_u8_array(&mut random_bits[..])
+        .expect("getRandomValues() succeeds");
+    random_bits
+        .iter()
+        .map(|b| format!("{:02X}", b))
+        .collect::<String>()
+    // random().to_bits()
 }
 
 fn find_head() -> HtmlHeadElement {
