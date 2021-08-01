@@ -1,8 +1,32 @@
 use super::super::{ast::ToCss, Style};
+use std::rc::Rc;
+use std::sync::atomic::{AtomicUsize, Ordering};
 use wasm_bindgen::prelude::*;
 use web_sys::{Element, HtmlHeadElement};
 
-pub type DomNode = Option<Element>;
+#[derive(Clone, Debug)]
+pub struct DomReference {
+    node: Option<Element>,
+    /// Usage count
+    users: Rc<AtomicUsize>,
+}
+
+impl Default for DomReference {
+    fn default() -> Self {
+        Self {
+            node: None,
+            users: Rc::new(AtomicUsize::new(0)),
+        }
+    }
+}
+
+impl PartialEq for DomReference {
+    fn eq(&self, rhs: &Self) -> bool {
+        Rc::ptr_eq(&self.users, &rhs.users)
+    }
+}
+
+pub type DomNode = DomReference;
 
 /*#[wasm_bindgen]
 extern "C" {
@@ -37,19 +61,22 @@ fn find_head() -> HtmlHeadElement {
 
 impl Style {
     /// Mounts the styles to the document head web-sys style
-    pub(crate) fn mount(mut self) -> Self {
-        self.unmount();
-        self.node = self.generate_element().ok();
-        if let Some(ref node) = self.node {
-            find_head().append_child(node).expect("mounting failed");
+    pub(crate) fn mount(&mut self) {
+        if self.node.users.fetch_add(1, Ordering::Acquire) == 0 {
+            self.node.node = self.generate_element().ok();
+            if let Some(ref node) = self.node.node {
+                find_head().append_child(node).expect("mounting failed");
+            }
         }
-        self
     }
 
     /// Unmounts the style from the HTML head web-sys style
-    fn unmount(&self) {
-        if let Some(ref node) = &self.node {
-            find_head().remove_child(node).expect("unmounting failed");
+    pub(crate) fn unmount(&mut self) {
+        let internal = &mut self.node;
+        if internal.users.fetch_sub(1, Ordering::Release) == 1 {
+            if let Some(ref node) = internal.node.take() {
+                find_head().remove_child(node).expect("unmounting failed");
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-use super::super::{Style};
+use super::super::Style;
 use rand::{distributions::Alphanumeric, rngs::SmallRng, Rng, SeedableRng};
 
 pub type DomNode = ();
@@ -11,5 +11,6 @@ pub fn classname_entropy() -> impl std::fmt::Display {
 }
 
 impl Style {
-    pub(crate) fn mount(self) -> Self { self }
+    pub(crate) fn mount(&mut self) {}
+    pub(crate) fn unmount(&mut self) {}
 }

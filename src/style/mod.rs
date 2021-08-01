@@ -1,13 +1,13 @@
 // Copyright © 2020 Lukas Wagner
 
-pub mod ast;
 mod arch;
+pub mod ast;
 mod utils;
 
 use ast::Scopes;
 use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
 use std::convert::TryInto;
+use std::sync::{Arc, Mutex};
 
 lazy_static! {
     static ref STYLE_REGISTRY: Arc<Mutex<StyleRegistry>> = Arc::new(Mutex::default());
@@ -38,7 +38,7 @@ pub struct Style {
     /// The abstract syntax tree of the css
     ast: Scopes,
     /// Style DOM node the data in this struct is turned into.
-    node: arch::DomNode,
+    pub(crate) node: arch::DomNode,
 }
 
 impl Style {
@@ -58,10 +58,7 @@ impl Style {
     /// newly created style.
     ///
     /// This function will already mount the style to the HTML head for the browser to use.
-    pub fn from_scopes<I1: Into<String>>(
-        class_name: I1,
-        scopes: Scopes,
-    ) -> Style {
+    pub fn from_scopes<I1: Into<String>>(class_name: I1, scopes: Scopes) -> Style {
         let style_registry_mutex = Arc::clone(&STYLE_REGISTRY);
         let mut style_registry = match style_registry_mutex.lock() {
             Ok(guard) => guard,
@@ -72,12 +69,11 @@ impl Style {
             .entry(scopes.clone())
             .or_insert_with(|| {
                 let class_name = class_name.into();
-                let mut new_style = Self {
+                let new_style = Self {
                     class_name: format!("{}-{}", class_name, arch::classname_entropy()),
                     ast: scopes,
                     node: Default::default(),
                 };
-                new_style = new_style.mount();
                 new_style
             });
         registered_style.clone()
