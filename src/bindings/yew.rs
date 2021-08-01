@@ -8,8 +8,8 @@ use super::super::style::Style;
 use crate::style::ast::Scopes;
 use yew::prelude::Classes;
 
-impl From<Style> for Classes {
-    fn from(style: Style) -> Self {
+impl From<&Style> for Classes {
+    fn from(style: &Style) -> Self {
         let mut classes = Self::new();
         classes.push(style.get_class_name().to_string());
         classes

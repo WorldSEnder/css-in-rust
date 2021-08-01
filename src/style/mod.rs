@@ -79,8 +79,8 @@ impl Style {
         registered_style.clone()
     }
 
-    pub fn get_class_name(self) -> String {
-        self.class_name
+    pub fn get_class_name(&self) -> &String {
+        &self.class_name
     }
 }
 

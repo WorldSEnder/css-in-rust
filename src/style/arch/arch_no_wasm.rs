@@ -11,6 +11,6 @@ pub fn classname_entropy() -> impl std::fmt::Display {
 }
 
 impl Style {
-    pub(crate) fn mount(&mut self) {}
-    pub(crate) fn unmount(&mut self) {}
+    pub fn mount(&mut self) {}
+    pub fn unmount(&mut self) {}
 }

@@ -61,7 +61,7 @@ fn find_head() -> HtmlHeadElement {
 
 impl Style {
     /// Mounts the styles to the document head web-sys style
-    pub(crate) fn mount(&mut self) {
+    pub fn mount(&mut self) {
         if self.node.users.fetch_add(1, Ordering::Acquire) == 0 {
             self.node.node = self.generate_element().ok();
             if let Some(ref node) = self.node.node {
@@ -71,7 +71,7 @@ impl Style {
     }
 
     /// Unmounts the style from the HTML head web-sys style
-    pub(crate) fn unmount(&mut self) {
+    pub fn unmount(&mut self) {
         let internal = &mut self.node;
         if internal.users.fetch_sub(1, Ordering::Release) == 1 {
             if let Some(ref node) = internal.node.take() {
