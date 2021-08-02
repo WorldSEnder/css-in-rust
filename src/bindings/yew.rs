@@ -16,6 +16,14 @@ impl From<&Style> for Classes {
     }
 }
 
+pub fn gen_unique_name(suggestion: impl Into<String>) -> String {
+    format!(
+        "{}-{}",
+        suggestion.into(),
+        crate::style::arch::classname_entropy()
+    )
+}
+
 pub fn use_scopes<I1: Into<String>>(class_name: I1, scopes: Scopes) -> Style {
     struct HookState {
         in_use: Option<Style>,

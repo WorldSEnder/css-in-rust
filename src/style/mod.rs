@@ -1,6 +1,6 @@
 // Copyright © 2020 Lukas Wagner
 
-mod arch;
+pub(crate) mod arch;
 pub mod ast;
 mod utils;
 
