@@ -188,9 +188,9 @@ impl ToCss for RuleContent {
     }
 }
 
-impl Into<RuleContent> for String {
-    fn into(self) -> RuleContent {
-        RuleContent::String(self)
+impl From<String> for RuleContent {
+    fn from(s: String) -> RuleContent {
+        RuleContent::String(s)
     }
 }
 
