@@ -5,18 +5,16 @@
 //!
 //! This is an advanced feature and most of the time you don't need to use it.
 
-use std::borrow::Cow;
-use std::cell::RefCell;
-use std::rc::Rc;
-
+use crate::{registry::StyleRegistry, style::StyleContent, Result};
 use once_cell::unsync::Lazy;
 use stylist_core::ResultDisplay;
+use std::{borrow::Cow, cell::RefCell, rc::Rc};
 use web_sys::Node;
 
-use crate::registry::StyleRegistry;
-use crate::style::StyleContent;
+#[cfg(feature = "yew_integration")]
+use yew::html::ImplicitClone;
+
 pub use crate::style::StyleId;
-use crate::Result;
 
 /// A builder for [`StyleManager`].
 #[derive(Debug, Clone)]
@@ -92,6 +90,15 @@ pub struct StyleManager {
     inner: Rc<StyleManagerBuilder>,
 }
 
+impl PartialEq for StyleManager {
+    fn eq(&self, other: &Self) -> bool {
+        Rc::ptr_eq(&self.inner, &other.inner)
+    }
+}
+
+#[cfg(feature = "yew_integration")]
+impl ImplicitClone for StyleManager {}
+
 impl StyleManager {
     /// Creates a builder for to build StyleManager.
     pub fn builder() -> StyleManagerBuilder {
@@ -116,8 +123,7 @@ impl StyleManager {
     /// Mount the [`Style`](crate::Style) into the DOM tree.
     #[cfg(target_arch = "wasm32")]
     pub(crate) fn mount(&self, content: &StyleContent) -> Result<()> {
-        use crate::arch::document;
-        use crate::Error;
+        use crate::{arch::document, Error};
 
         let document = document()?;
         let container = self.container().ok_or(Error::Web(None))?;
@@ -143,8 +149,7 @@ impl StyleManager {
     /// Unmount the [`Style`](crate::Style) from the DOM tree.
     #[cfg(target_arch = "wasm32")]
     pub(crate) fn unmount(&self, id: &StyleId) -> Result<()> {
-        use crate::arch::document;
-        use crate::Error;
+        use crate::{arch::document, Error};
 
         let document = document()?;
         (|| {
@@ -173,12 +178,6 @@ impl StyleManager {
     pub(crate) fn unmount(&self, id: &StyleId) -> Result<()> {
         // Does nothing on non-wasm targets.
         Ok(())
-    }
-}
-
-impl From<&Self> for StyleManager {
-    fn from(m: &Self) -> Self {
-        m.clone()
     }
 }
 
