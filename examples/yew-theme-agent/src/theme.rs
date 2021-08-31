@@ -1,7 +1,9 @@
 use std::sync::Arc;
 
-use yew::agent::AgentLink;
-use yewtil::store::{Store, StoreWrapper};
+use yew_agent::{
+    utils::store::{Store, StoreWrapper},
+    AgentLink,
+};
 
 #[derive(Debug, Clone)]
 pub(crate) enum ThemeKind {

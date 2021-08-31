@@ -1,0 +1,4 @@
+[submodule "yew"]
+	path = yew
+	url = https://github.com/yewstack/yew
+	branch = master

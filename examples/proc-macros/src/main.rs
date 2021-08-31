@@ -1,6 +1,5 @@
-use stylist::css;
-use stylist::yew::Global;
-use yew::{html, Component, ComponentLink, Html, ShouldRender};
+use stylist::{css, yew::Global};
+use yew::{html, Component, Context, Html};
 
 use log::Level;
 
@@ -13,21 +12,21 @@ impl Component for Inside {
     type Message = ();
     type Properties = ();
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
+    fn create(_: &Context<Self>) -> Self {
         Self {}
     }
 
-    fn update(&mut self, _: Self::Message) -> ShouldRender {
+    fn update(&mut self, _: &Context<Self>, _: Self::Message) -> bool {
         false
     }
 
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
+    fn changed(&mut self, _: &Context<Self>) -> bool {
         false
     }
 
-    fn view(&self) -> Html {
+    fn view(&self, _: &Context<Self>) -> Html {
         html! {
-            <div class=css!(
+            <div class={css!(
                 r#"
                     width: ${size}px;
                     height: ${size}px;
@@ -42,7 +41,7 @@ impl Component for Inside {
                     color: white;
                 "#,
                 size = 200,
-            )>
+            )}>
                 {"The quick brown fox jumps over the lazy dog"}
             </div>
         }
@@ -55,22 +54,22 @@ impl Component for App {
     type Message = ();
     type Properties = ();
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
+    fn create(_: &Context<Self>) -> Self {
         Self {}
     }
 
-    fn update(&mut self, _: Self::Message) -> ShouldRender {
+    fn update(&mut self, _: &Context<Self>, _: Self::Message) -> bool {
         false
     }
 
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
+    fn changed(&mut self, _: &Context<Self>) -> bool {
         false
     }
 
-    fn view(&self) -> Html {
+    fn view(&self, _: &Context<Self>) -> Html {
         html! {
             <>
-                <Global css=css!(r#"
+                <Global css={css!(r#"
                     html, body {
                         font-family: sans-serif;
 
@@ -85,9 +84,9 @@ impl Component for App {
 
                         background-color: rgb(237, 244, 255);
                     }
-                "#) />
+                "#)} />
                 <h1>{"Procedural Macro Example"}</h1>
-                <div class=css!(r#"
+                <div class={css!(r#"
                     box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.7);
                     height: 500px;
                     width: 500px;
@@ -102,7 +101,7 @@ impl Component for App {
 
                     flex-direction: column;
                     background-color: white;
-                "#) >
+                "#)} >
                     {"The quick brown fox jumps over the lazy dog"}
                     <Inside />
                 </div>

@@ -1,54 +1,63 @@
-use stylist::yew::Global;
-use stylist::{StyleSource, YieldStyle};
-use yew::{html, Component, ComponentLink, Html, ShouldRender};
+use stylist::{yew::Global, StyleSource, YieldStyle};
+use yew::{html, Component, Context, Html, Properties};
 use yewdux::prelude::*;
-use yewtil::NeqAssign;
 
 use log::Level;
 
 mod store;
 
-use store::theme::ThemeKind;
-use store::{Action, AppDispatch};
+use store::{theme::ThemeKind, Action, AppDispatch, AppStore};
 
-pub(crate) struct BaseInside {
+#[derive(PartialEq, Clone, Default, Properties)]
+pub(crate) struct BaseProps {
+    #[prop_or_default]
     dispatch: AppDispatch,
 }
 
+impl Dispatched for BaseProps {
+    type Store = AppStore;
+
+    fn dispatch(&self) -> &DispatchProps<Self::Store> {
+        self.dispatch.dispatch()
+    }
+}
+
+pub(crate) struct BaseInside;
+
 impl Component for BaseInside {
     type Message = ();
-    type Properties = AppDispatch;
+    type Properties = BaseProps;
 
-    fn create(dispatch: Self::Properties, _: ComponentLink<Self>) -> Self {
-        Self { dispatch }
+    fn create(_: &Context<Self>) -> Self {
+        Self {}
     }
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
+    fn update(&mut self, _ctx: &Context<Self>, _msg: Self::Message) -> bool {
         false
     }
 
-    fn change(&mut self, dispatch: Self::Properties) -> ShouldRender {
-        self.dispatch.neq_assign(dispatch)
+    fn changed(&mut self, _: &Context<Self>) -> bool {
+        false
     }
 
-    fn view(&self) -> Html {
-        let theme_str = match self.dispatch.state().theme.kind {
+    fn view(&self, ctx: &Context<Self>) -> Html {
+        let dispatch = ctx.props().dispatch();
+        let theme_str = match dispatch.state().theme.kind {
             ThemeKind::Light => "Dark Theme",
             ThemeKind::Dark => "Light Theme",
         };
 
-        let other_theme = match self.dispatch.state().theme.kind {
+        let other_theme = match dispatch.state().theme.kind {
             ThemeKind::Light => ThemeKind::Dark,
             ThemeKind::Dark => ThemeKind::Light,
         };
 
-        let switch_theme = self
-            .dispatch
-            .callback(move |_| Action::SetTheme(other_theme.clone()));
+        let switch_theme =
+            dispatch.callback(move |_: yew::MouseEvent| Action::SetTheme(other_theme.clone()));
 
         html! {
-            <div class=self.style()>
-                <button onclick=switch_theme id="yew-sample-button">{"Switch to "}{theme_str}</button>
+            <div class={self.style()}>
+                <button onclick={move |c| switch_theme.emit(c)} id="yew-sample-button">{"Switch to "}{theme_str}</button>
             </div>
         }
     }
@@ -79,22 +88,25 @@ pub(crate) struct App {
 
 impl Component for App {
     type Message = ();
-    type Properties = AppDispatch;
+    type Properties = BaseProps;
 
-    fn create(dispatch: Self::Properties, _link: ComponentLink<Self>) -> Self {
+    fn create(ctx: &Context<Self>) -> Self {
+        let dispatch = ctx.props().dispatch().clone();
         Self { dispatch }
     }
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
+    fn update(&mut self, ctx: &Context<Self>, _msg: Self::Message) -> bool {
+        self.dispatch = ctx.props().dispatch().clone();
         false
     }
 
-    fn change(&mut self, dispatch: Self::Properties) -> ShouldRender {
-        self.dispatch.neq_assign(dispatch)
+    fn changed(&mut self, _: &Context<Self>) -> bool {
+        false
     }
 
-    fn view(&self) -> Html {
-        let theme = self.dispatch.state().theme.clone();
+    fn view(&self, ctx: &Context<Self>) -> Html {
+        let dispatch = ctx.props().dispatch();
+        let theme = dispatch.state().theme.clone();
 
         let theme_str = match theme.kind {
             ThemeKind::Light => "light theme",
@@ -104,7 +116,7 @@ impl Component for App {
         html! {
             <>
                 // Global Styles can be applied with <Global /> component.
-                <Global css=format!(
+                <Global css={format!(
                     r#"
                         html, body {{
                             font-family: sans-serif;
@@ -124,9 +136,9 @@ impl Component for App {
                     "#,
                     bg = theme.current().background_color,
                     ft_color = theme.current().font_color,
-                ) />
+                )} />
                 <h1>{"Yew Theming w/ Yewdux"}</h1>
-                <div class=self.style() id="yew-sample-content">
+                <div class={self.style()} id="yew-sample-content">
                     {"You are now using the "}{theme_str}{"!"}
                     <Inside />
                 </div>
@@ -179,8 +191,9 @@ mod tests {
 
     #[wasm_bindgen_test]
     fn test_simple() {
-        yew::app::App::<WithDispatch<App>>::new()
-            .mount(yew::utils::document().get_element_by_id("output").unwrap());
+        yew::start_app_in_element::<WithDispatch<App>>(
+            yew::utils::document().get_element_by_id("output").unwrap(),
+        );
         let window = window().unwrap();
         let doc = window.document().unwrap();
         let body = window.document().unwrap().body().unwrap();

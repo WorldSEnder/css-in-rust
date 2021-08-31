@@ -1,6 +1,5 @@
-use stylist::yew::Global;
-use stylist::{Style, StyleSource, YieldStyle};
-use yew::{html, Component, ComponentLink, Html, ShouldRender};
+use stylist::{yew::Global, Style, StyleSource, YieldStyle};
+use yew::{html, Component, Context, Html};
 
 use log::Level;
 
@@ -10,21 +9,21 @@ impl Component for Inside {
     type Message = ();
     type Properties = ();
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
+    fn create(_: &Context<Self>) -> Self {
         Self {}
     }
 
-    fn update(&mut self, _: Self::Message) -> ShouldRender {
+    fn update(&mut self, _: &Context<Self>, _: Self::Message) -> bool {
         false
     }
 
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
+    fn changed(&mut self, _: &Context<Self>) -> bool {
         false
     }
 
-    fn view(&self) -> Html {
+    fn view(&self, _: &Context<Self>) -> Html {
         html! {
-            <div class=self.style()>
+            <div class={self.style()}>
                 {"The quick brown fox jumps over the lazy dog"}
             </div>
         }
@@ -62,7 +61,7 @@ impl Component for App {
     type Message = ();
     type Properties = ();
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
+    fn create(_: &Context<Self>) -> Self {
         // Alternatively, you can create Style manually during Component creation.
         let style = Style::new(
             r#"
@@ -86,19 +85,19 @@ impl Component for App {
         Self { style }
     }
 
-    fn update(&mut self, _: Self::Message) -> ShouldRender {
+    fn update(&mut self, _: &Context<Self>, _: Self::Message) -> bool {
         false
     }
 
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
+    fn changed(&mut self, _: &Context<Self>) -> bool {
         false
     }
 
-    fn view(&self) -> Html {
+    fn view(&self, _: &Context<Self>) -> Html {
         html! {
             <>
                 // Global Styles can be applied with <GlobalStyle /> component.
-                <Global css=r#"
+                <Global css={r#"
                     html, body {
                         font-family: sans-serif;
 
@@ -113,9 +112,9 @@ impl Component for App {
 
                         background-color: rgb(237, 244, 255);
                     }
-                "# />
+                "#} />
                 <h1>{"Yew Integration"}</h1>
-                <div class=self.style.clone() id="yew-sample-content">
+                <div class={self.style.clone()} id="yew-sample-content">
                     {"The quick brown fox jumps over the lazy dog"}
                     <Inside />
                 </div>
@@ -140,8 +139,9 @@ mod tests {
 
     #[wasm_bindgen_test]
     fn test_simple() {
-        yew::app::App::<App>::new()
-            .mount(yew::utils::document().get_element_by_id("output").unwrap());
+        yew::start_app_in_element::<App>(
+            yew::utils::document().get_element_by_id("output").unwrap(),
+        );
         let window = window().unwrap();
         let doc = window.document().unwrap();
         let body = window.document().unwrap().body().unwrap();

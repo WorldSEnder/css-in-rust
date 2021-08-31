@@ -4,7 +4,7 @@ use crate::{GlobalStyle, StyleSource};
 use stylist_core::ResultDisplay;
 
 /// The properties for [`Global`] Component, please see its documentation for usage.
-#[derive(Properties, Clone, Debug)]
+#[derive(Properties, Clone, Debug, PartialEq)]
 pub struct GlobalProps {
     pub css: StyleSource<'static>,
 }
@@ -51,8 +51,6 @@ pub struct GlobalProps {
 /// ```
 #[derive(Debug)]
 pub struct Global {
-    props: GlobalProps,
-
     global_style: Option<GlobalStyle>,
 }
 
@@ -60,44 +58,37 @@ impl Component for Global {
     type Message = ();
     type Properties = GlobalProps;
 
-    fn create(props: Self::Properties, _link: ComponentLink<Self>) -> Self {
-        Self {
-            props,
-
-            global_style: None,
-        }
+    fn create(_ctx: &Context<Self>) -> Self {
+        Self { global_style: None }
     }
 
-    fn rendered(&mut self, first_render: bool) {
+    fn rendered(&mut self, ctx: &Context<Self>, first_render: bool) {
         if first_render {
-            self.update_global_style();
+            self.update_global_style(ctx.props());
         }
     }
 
-    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
+    fn update(&mut self, _ctx: &Context<Self>, _msg: Self::Message) -> bool {
         false
     }
 
-    fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        self.props = props;
-
-        self.update_global_style();
-
+    fn changed(&mut self, ctx: &Context<Self>) -> bool {
+        self.update_global_style(ctx.props());
         false
     }
 
-    fn view(&self) -> Html {
+    fn view(&self, _ctx: &Context<Self>) -> Html {
         Html::default()
     }
 }
 
 impl Global {
-    fn update_global_style(&mut self) {
+    fn update_global_style(&mut self, props: &GlobalProps) {
         if let Some(ref m) = self.global_style {
             m.unregister();
         }
 
         self.global_style =
-            Some(GlobalStyle::new(self.props.css.clone()).expect_display("Failed to parse style."));
+            Some(GlobalStyle::new(props.css.clone()).expect_display("Failed to parse style."));
     }
 }

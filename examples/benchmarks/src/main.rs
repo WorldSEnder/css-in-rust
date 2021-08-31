@@ -34,7 +34,6 @@ pub enum BenchMsg {
 }
 
 pub struct Benchmarks {
-    link: ComponentLink<Self>,
     finished: bool,
 
     parse_simple: Option<f64>,
@@ -56,9 +55,8 @@ impl Component for Benchmarks {
     type Message = BenchMsg;
     type Properties = ();
 
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+    fn create(_: &Context<Self>) -> Self {
         Self {
-            link,
             finished: false,
             parse_simple: None,
             macro_simple: None,
@@ -74,28 +72,28 @@ impl Component for Benchmarks {
         }
     }
 
-    fn rendered(&mut self, first_render: bool) {
+    fn rendered(&mut self, ctx: &Context<Self>, first_render: bool) {
         if first_render {
-            let cb = self
-                .link
+            let cb = ctx
+                .link()
                 .callback(|_| BenchMsg::ParseSimpleFinish(benchmarks::bench_parse_simple()));
             Timeout::new(100, move || cb.emit(())).forget();
         }
     }
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             BenchMsg::ParseSimpleFinish(m) => {
                 self.parse_simple = Some(m);
-                let cb = self
-                    .link
+                let cb = ctx
+                    .link()
                     .callback(|_| BenchMsg::MacroSimpleFinish(benchmarks::bench_macro_simple()));
 
                 Timeout::new(100, move || cb.emit(())).forget();
             }
             BenchMsg::MacroSimpleFinish(m) => {
                 self.macro_simple = Some(m);
-                let cb = self.link.callback(|_| {
+                let cb = ctx.link().callback(|_| {
                     BenchMsg::MacroInlineSimpleFinish(benchmarks::bench_macro_inline_simple())
                 });
 
@@ -103,7 +101,7 @@ impl Component for Benchmarks {
             }
             BenchMsg::MacroInlineSimpleFinish(m) => {
                 self.macro_inline_simple = Some(m);
-                let cb = self.link.callback(|_| {
+                let cb = ctx.link().callback(|_| {
                     BenchMsg::ParseSimpleNoCacheFinish(benchmarks::bench_parse_simple_no_cache())
                 });
 
@@ -111,8 +109,8 @@ impl Component for Benchmarks {
             }
             BenchMsg::ParseSimpleNoCacheFinish(m) => {
                 self.parse_simple_no_cache = Some(m);
-                let cb = self
-                    .link
+                let cb = ctx
+                    .link()
                     .callback(|_| BenchMsg::ParseComplexFinish(benchmarks::bench_parse_complex()));
 
                 Timeout::new(100, move || cb.emit(())).forget();
@@ -121,8 +119,8 @@ impl Component for Benchmarks {
             BenchMsg::ParseComplexFinish(m) => {
                 self.parse_complex = Some(m);
 
-                let cb = self
-                    .link
+                let cb = ctx
+                    .link()
                     .callback(|_| BenchMsg::MacroComplexFinish(benchmarks::bench_macro_complex()));
 
                 Timeout::new(100, move || cb.emit(())).forget();
@@ -130,7 +128,7 @@ impl Component for Benchmarks {
             BenchMsg::MacroComplexFinish(m) => {
                 self.macro_complex = Some(m);
 
-                let cb = self.link.callback(|_| {
+                let cb = ctx.link().callback(|_| {
                     BenchMsg::MacroInlineComplexFinish(benchmarks::bench_macro_inline_complex())
                 });
 
@@ -139,7 +137,7 @@ impl Component for Benchmarks {
             BenchMsg::MacroInlineComplexFinish(m) => {
                 self.macro_inline_complex = Some(m);
 
-                let cb = self.link.callback(|_| {
+                let cb = ctx.link().callback(|_| {
                     BenchMsg::ParseComplexNoCacheFinish(benchmarks::bench_parse_complex_no_cache())
                 });
 
@@ -148,8 +146,8 @@ impl Component for Benchmarks {
             BenchMsg::ParseComplexNoCacheFinish(m) => {
                 self.parse_complex_no_cache = Some(m);
 
-                let cb = self
-                    .link
+                let cb = ctx
+                    .link()
                     .callback(|_| BenchMsg::CachedLookupFinish(benchmarks::bench_cached_lookup()));
 
                 Timeout::new(100, move || cb.emit(())).forget();
@@ -159,7 +157,7 @@ impl Component for Benchmarks {
                 self.cached_lookup = Some(m);
 
                 let cb =
-                    self.link.callback(|_| {
+                    ctx.link().callback(|_| {
                         BenchMsg::CachedLookupBigSheetFinish(
                             benchmarks::bench_cached_lookup_big_sheet(),
                         )
@@ -171,8 +169,8 @@ impl Component for Benchmarks {
             BenchMsg::CachedLookupBigSheetFinish(m) => {
                 self.cached_lookup_big_sheet = Some(m);
 
-                let cb = self
-                    .link
+                let cb = ctx
+                    .link()
                     .callback(|_| BenchMsg::MountingFinish(benchmarks::bench_mounting()));
 
                 Timeout::new(100, move || cb.emit(())).forget();
@@ -186,13 +184,13 @@ impl Component for Benchmarks {
         true
     }
 
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
+    fn changed(&mut self, _: &Context<Self>) -> bool {
         false
     }
 
-    fn view(&self) -> Html {
+    fn view(&self, _: &Context<Self>) -> Html {
         html! {
-            <div class=self.style()>
+            <div class={self.style()}>
                 {
                     if !self.finished {
                         html!{<div class="running">{"Benchmarking..."}<br />{"The browser may be unresponsive during the benchmark."}</div>}
@@ -316,7 +314,6 @@ pub enum AppMsg {
 }
 
 pub struct App {
-    link: ComponentLink<Self>,
     started: bool,
 }
 
@@ -324,14 +321,11 @@ impl Component for App {
     type Message = AppMsg;
     type Properties = ();
 
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
-        Self {
-            link,
-            started: false,
-        }
+    fn create(_: &Context<Self>) -> Self {
+        Self { started: false }
     }
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+    fn update(&mut self, _: &Context<Self>, msg: Self::Message) -> bool {
         assert_eq!(msg, AppMsg::Start);
 
         self.started = true;
@@ -339,15 +333,15 @@ impl Component for App {
         true
     }
 
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
+    fn changed(&mut self, _: &Context<Self>) -> bool {
         false
     }
 
-    fn view(&self) -> Html {
+    fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
             <>
-                <Global css=GLOBAL_STYLE />
-                <div class=self.style()>
+                <Global css={GLOBAL_STYLE} />
+                <div class={self.style()}>
                     <h1>{"Stylist Benchmark"}</h1>
                     {
                         if self.started {
@@ -356,7 +350,7 @@ impl Component for App {
                             html!{
                                 <>
                                     <div class="before-intro">{"To start benchmarking, please click start:"}</div>
-                                    <button onclick=self.link.callback(|_| AppMsg::Start)>
+                                    <button onclick={ctx.link().callback(|_| AppMsg::Start)}>
                                         {"Start!"}
                                     </button>
                                 </>

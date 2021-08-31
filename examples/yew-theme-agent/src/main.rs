@@ -1,11 +1,12 @@
 use std::sync::Arc;
 
-use stylist::yew::Global;
-use stylist::{StyleSource, YieldStyle};
-use yew::{html, Bridge, Component, ComponentLink, Html, ShouldRender};
-use yewtil::store::{Bridgeable, ReadOnly, StoreWrapper};
-
 use log::Level;
+use stylist::{yew::Global, StyleSource, YieldStyle};
+use yew::{html, Component, Context, Html};
+use yew_agent::{
+    utils::store::{Bridgeable, ReadOnly, StoreWrapper},
+    Bridge,
+};
 
 mod theme;
 
@@ -17,7 +18,6 @@ pub(crate) enum InsideMsg {
 }
 
 pub(crate) struct Inside {
-    link: ComponentLink<Self>,
     theme_kind: ThemeKind,
     theme: Option<Arc<Theme>>,
     theme_store: Box<dyn Bridge<StoreWrapper<ThemeStore>>>,
@@ -27,17 +27,16 @@ impl Component for Inside {
     type Message = InsideMsg;
     type Properties = ();
 
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
-        let callback = link.callback(InsideMsg::ThemeUpdated);
+    fn create(ctx: &Context<Self>) -> Self {
+        let callback = ctx.link().callback(InsideMsg::ThemeUpdated);
         Self {
-            link,
             theme_kind: ThemeKind::Light,
             theme: None,
             theme_store: ThemeStore::bridge(callback),
         }
     }
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+    fn update(&mut self, _: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             InsideMsg::ThemeUpdated(m) => {
                 let m = m.borrow();
@@ -52,11 +51,11 @@ impl Component for Inside {
         true
     }
 
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
+    fn changed(&mut self, _: &Context<Self>) -> bool {
         false
     }
 
-    fn view(&self) -> Html {
+    fn view(&self, ctx: &Context<Self>) -> Html {
         let theme_str = match self.theme_kind {
             ThemeKind::Light => "Dark Theme",
             ThemeKind::Dark => "Light Theme",
@@ -67,13 +66,13 @@ impl Component for Inside {
             ThemeKind::Dark => ThemeKind::Light,
         };
 
-        let switch_theme = self
-            .link
+        let switch_theme = ctx
+            .link()
             .callback(move |_| InsideMsg::SetTheme(other_theme.clone()));
 
         html! {
-            <div class=self.style()>
-                <button onclick=switch_theme>{"Switch to "}{theme_str}</button>
+            <div class={self.style()}>
+                <button onclick={switch_theme}>{"Switch to "}{theme_str}</button>
             </div>
         }
     }
@@ -110,8 +109,8 @@ impl Component for App {
     type Message = AppMsg;
     type Properties = ();
 
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
-        let callback = link.callback(AppMsg::ThemeUpdated);
+    fn create(ctx: &Context<Self>) -> Self {
+        let callback = ctx.link().callback(AppMsg::ThemeUpdated);
 
         Self {
             theme: None,
@@ -120,7 +119,7 @@ impl Component for App {
         }
     }
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+    fn update(&mut self, _: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             AppMsg::ThemeUpdated(m) => {
                 let m = m.borrow();
@@ -132,11 +131,11 @@ impl Component for App {
         true
     }
 
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
+    fn changed(&mut self, _: &Context<Self>) -> bool {
         false
     }
 
-    fn view(&self) -> Html {
+    fn view(&self, _: &Context<Self>) -> Html {
         if self.theme.is_none() {
             return Html::default();
         }
@@ -151,7 +150,7 @@ impl Component for App {
         html! {
             <>
                 // Global Styles can be applied with <Global /> component.
-                <Global css=format!(
+                <Global css={format!(
                     r#"
                         html, body {{
                             font-family: sans-serif;
@@ -171,9 +170,9 @@ impl Component for App {
                     "#,
                     bg = theme.background_color,
                     ft_color = theme.font_color,
-                ) />
+                )} />
                 <h1>{"Yew Theming w/ Agent"}</h1>
-                <div class=self.style()>
+                <div class={self.style()}>
                     {"You are now using the "}{theme_str}{"!"}
                     <Inside />
                 </div>

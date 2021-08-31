@@ -1,6 +1,4 @@
-use stylist::manager::StyleManager;
-use stylist::yew::Global;
-use stylist::{Style, StyleSource, YieldStyle};
+use stylist::{manager::StyleManager, yew::Global, Style, StyleSource, YieldStyle};
 use web_sys::{window, Element, ShadowRootInit, ShadowRootMode};
 use yew::prelude::*;
 
@@ -14,13 +12,13 @@ impl Component for ShadowRoot {
     type Message = ();
     type Properties = ();
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
+    fn create(_: &Context<Self>) -> Self {
         Self {
             root_ref: NodeRef::default(),
         }
     }
 
-    fn rendered(&mut self, first_render: bool) {
+    fn rendered(&mut self, _: &Context<Self>, first_render: bool) {
         if first_render {
             if let Some(m) = self.root_ref.cast::<Element>() {
                 if let Ok(root) = m.attach_shadow(&ShadowRootInit::new(ShadowRootMode::Open)) {
@@ -66,17 +64,17 @@ impl Component for ShadowRoot {
         }
     }
 
-    fn update(&mut self, _: Self::Message) -> ShouldRender {
+    fn update(&mut self, _: &Context<Self>, _: Self::Message) -> bool {
         false
     }
 
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
+    fn changed(&mut self, _: &Context<Self>) -> bool {
         false
     }
 
-    fn view(&self) -> Html {
+    fn view(&self, _: &Context<Self>) -> Html {
         html! {
-            <div ref=self.root_ref.clone() />
+            <div ref={self.root_ref.clone()} />
         }
     }
 }
@@ -87,22 +85,22 @@ impl Component for App {
     type Message = ();
     type Properties = ();
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
+    fn create(_: &Context<Self>) -> Self {
         Self
     }
 
-    fn update(&mut self, _: Self::Message) -> ShouldRender {
+    fn update(&mut self, _: &Context<Self>, _: Self::Message) -> bool {
         false
     }
 
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
+    fn changed(&mut self, _: &Context<Self>) -> bool {
         false
     }
 
-    fn view(&self) -> Html {
+    fn view(&self, _: &Context<Self>) -> Html {
         html! {
             <>
-                <Global css=r#"
+                <Global css={r#"
                     html, body {
                         font-family: sans-serif;
 
@@ -121,9 +119,9 @@ impl Component for App {
                     span {
                         color: red;
                     }
-                "# />
+                "#} />
                 <h1>{"Yew Shadow DOM Example"}</h1>
-                <div class=self.style()>
+                <div class={self.style()}>
                     <span>{"Outside of Shadow DOM."}</span>
                     <ShadowRoot />
                 </div>
