@@ -28,20 +28,20 @@
 //!     type Message = ();
 //!     type Properties = ();
 //!
-//!     fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
+//!     fn create(_: &Context<Self>) -> Self {
 //!         Self {}
 //!     }
 //!
-//!     fn change(&mut self, _: Self::Properties) -> ShouldRender {
+//!     fn changed(&mut self, _: &Context<Self>) -> bool {
 //!         false
 //!     }
 //!
-//!     fn update(&mut self, _: Self::Message) -> ShouldRender {
+//!     fn update(&mut self, _: &Context<Self>, _: Self::Message) -> bool {
 //!         false
 //!     }
 //!
-//!     fn view(&self) -> Html {
-//!         html! {<div class=css!("color: red;")>{"Hello World!"}</div>}
+//!     fn view(&self, _: &Context<Self>) -> Html {
+//!         html! {<div class={css!("color: red;")}>{"Hello World!"}</div>}
 //!     }
 //! }
 //! ```
@@ -237,8 +237,8 @@ pub use stylist_macros::global_style;
 /// use stylist::yew::Global;
 /// use yew::prelude::*;
 ///
-/// let rendered = html! {<div class=css!("color: red;") />};
-/// let rendered_global = html! {<Global css=css!("color: red;") />};
+/// let rendered = html! {<div class={css!("color: red;")} />};
+/// let rendered_global = html! {<Global css={css!("color: red;")} />};
 /// ```
 #[cfg_attr(documenting, doc(cfg(feature = "macros")))]
 #[cfg(feature = "macros")]

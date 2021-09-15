@@ -27,19 +27,19 @@ pub struct GlobalProps {
 ///     type Message = ();
 ///     type Properties = ();
 ///
-///     fn create(_props: Self::Properties, _link: ComponentLink<Self>) -> Self {
+///     fn create(_: &Context<Self>) -> Self {
 ///         Self
 ///     }
 ///
-///     fn update(&mut self, _msg: Self::Message) -> ShouldRender {
+///     fn update(&mut self, _: &Context<Self>, _: Self::Message) -> bool {
 ///         false
 ///     }
 ///
-///     fn change(&mut self, _props: Self::Properties) -> ShouldRender {
+///     fn changed(&mut self, _: &Context<Self>) -> bool {
 ///         false
 ///     }
 ///
-///     fn view(&self) -> Html {
+///     fn view(&self, _: &Context<Self>) -> Html {
 ///         html! {
 ///             <>
 ///                 <Global css="color: red;" />

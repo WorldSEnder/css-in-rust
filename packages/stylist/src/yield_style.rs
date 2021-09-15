@@ -28,20 +28,20 @@ use crate::{Result, Style, StyleSource};
 ///     type Message = ();
 ///     type Properties = ();
 ///
-///     fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
+///     fn create(_: &Context<Self>) -> Self {
 ///         Self {}
 ///     }
 ///
-///     fn change(&mut self, _: Self::Properties) -> ShouldRender {
+///     fn changed(&mut self, _: &Context<Self>) -> bool {
 ///         false
 ///     }
 ///
-///     fn update(&mut self, _: Self::Message) -> ShouldRender {
+///     fn update(&mut self, _: &Context<Self>, _: Self::Message) -> bool {
 ///         false
 ///     }
 ///
-///     fn view(&self) -> Html {
-///         html! {<div class=self.style()>{"Hello World!"}</div>}
+///     fn view(&self, _: &Context<Self>) -> Html {
+///         html! {<div class={self.style()}>{"Hello World!"}</div>}
 ///     }
 /// }
 ///
