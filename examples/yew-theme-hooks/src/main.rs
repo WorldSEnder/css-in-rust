@@ -1,8 +1,6 @@
-use stylist::css;
-use stylist::yew::{use_style, Global};
-use yew::prelude::*;
-
 use log::Level;
+use stylist::yew::{css, use_style, Global};
+use yew::prelude::*;
 
 mod contexts;
 

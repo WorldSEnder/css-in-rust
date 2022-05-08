@@ -3,7 +3,7 @@ enum NoDisplay {
 }
 fn main() {
     let expr = NoDisplay::ND;
-    let _ = stylist::css! {
+    let _ = stylist::generic::css! {
         background: ${expr};
     };
 }

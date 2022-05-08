@@ -48,7 +48,7 @@ pub fn styled_component_impl_impl(item: HookLike) -> syn::Result<TokenStream> {
         #[allow(unused_macros)]
         macro_rules! css {
             ($( $args:tt )*) => {
-                ::stylist::css!($($args)*).with_manager({
+                ::stylist::generic::css!($($args)*).with_manager({
                     #[allow(clippy::redundant_clone)]
                     #mgr_ident.clone()
                 })

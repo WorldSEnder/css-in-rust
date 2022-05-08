@@ -34,8 +34,8 @@
 //! ## Example
 //!
 //! ```
-//! use stylist::{css, Style};
-//! use yew::prelude::*;
+//! use stylist::generic::css;
+//! use stylist::Style;
 //!
 //! let s = css!(
 //!     r#"
@@ -124,8 +124,8 @@
 //! ## Example
 //!
 //! ```
-//! use stylist::{Style, css};
-//! use yew::prelude::*;
+//! use stylist::generic::css;
+//! use stylist::Style;
 //!
 //! let max_width_cuttoff = "500px";
 //! let primary_color = "red";

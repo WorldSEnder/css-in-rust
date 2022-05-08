@@ -1,6 +1,6 @@
 #[test]
 fn test_literal_at_support() {
-    let style = stylist::style! {
+    let style = stylist::generic::style! {
         r#"@supports (display:grid) {
             background-color: grey;
         }"#

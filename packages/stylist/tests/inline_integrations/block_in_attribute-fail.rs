@@ -1,6 +1,6 @@
 fn main() {
     let is_an_expression = "black";
-    let _ = stylist::css! {
+    let _ = stylist::generic::css! {
         .outer {
             border: ${is_an_expression};
             background-color: {should_be_expression};

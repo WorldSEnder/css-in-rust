@@ -20,7 +20,7 @@
 //! # Warning
 //!
 //! This module is not stable at the moment and is exposed to be used by procedural macros.
-//! Its API may change at anytime.
+//! Its API may change at any time.
 
 /// A procedural macro that parses a string literal or an inline stylesheet into a [`Sheet`].
 ///
@@ -32,9 +32,11 @@
 /// Use of this macro is discouraged.
 ///
 /// Any place that accepts the output of this macro also accepts the output of
-/// [`css!`](crate::css).
+/// [`css!`].
 ///
-/// Use [`css!`](crate::css) unless you know what you are doing.
+/// Use [`css!`] unless you know what you are doing.
+///
+/// [`css!`]: crate::generic::css
 #[cfg_attr(documenting, doc(cfg(feature = "macros")))]
 #[cfg(feature = "macros")]
 pub use stylist_macros::sheet;

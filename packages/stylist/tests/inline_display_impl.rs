@@ -16,7 +16,7 @@ impl Foo {
 
 #[test]
 fn test_display_impl() {
-    let style = stylist::style! {
+    let style = stylist::generic::style! {
         display: ${Foo::Bar};
     }
     .unwrap();

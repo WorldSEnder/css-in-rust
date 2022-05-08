@@ -1,5 +1,5 @@
 use stylist::manager::StyleManager;
-use stylist::yew::Global;
+use stylist::yew::{css, Global};
 use stylist::Style;
 use web_sys::{window, Element, ShadowRootInit, ShadowRootMode};
 use yew::prelude::*;
@@ -84,7 +84,7 @@ impl Component for App {
     }
 
     fn view(&self, _ctx: &Context<Self>) -> Html {
-        let card = stylist::css!(
+        let card = css!(
             r#"
             box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.7);
             height: 500px;

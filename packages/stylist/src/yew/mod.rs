@@ -4,7 +4,7 @@ use yew::html::{Classes, IntoPropValue};
 
 /// A procedural macro to style a function component.
 ///
-/// Specifically this introduces a specialized [`css!`](crate::css) macro
+/// Specifically this introduces a specialized [`css!`] macro
 /// that is aware of the contextual style manager.
 ///
 /// For detailed arguments and usage see also the underlying
@@ -26,12 +26,14 @@ use yew::html::{Classes, IntoPropValue};
 ///
 /// # Note:
 ///
-/// You don't need to import [`css!`](crate::css) inside of a `styled_component`.
+/// You don't need to import [`css!`] inside of a `styled_component`.
+///
+/// [`css!`]: crate::generic::css!
 #[cfg_attr(documenting, doc(cfg(feature = "macros")))]
 #[cfg(feature = "macros")]
 pub use stylist_macros::styled_component;
 
-/// A procedural macro to use a specialized, contextual [`css!`](crate::css) macro.
+/// A procedural macro to use a specialized, contextual [`css!`](crate::generic::css) macro.
 ///
 /// [`styled_component`] is implemented in terms of this, prefer that if possible.
 /// If you need to use [`function_component`](::yew::function_component) directly
@@ -83,6 +85,9 @@ pub use stylist_macros::styled_component_impl;
 #[cfg(feature = "yew_use_style")]
 pub use stylist_macros::use_style;
 
+#[doc(inline)]
+pub use crate::generic::css;
+
 use crate::ast::Sheet;
 use crate::manager::StyleManager;
 use crate::{Style, StyleSource};
@@ -96,9 +101,8 @@ mod hooks;
 mod provider;
 
 pub use global::{Global, GlobalProps};
-pub use provider::{ManagerProvider, ManagerProviderProps};
-
 pub use hooks::*;
+pub use provider::{ManagerProvider, ManagerProviderProps};
 
 impl From<Style> for Classes {
     fn from(style: Style) -> Self {

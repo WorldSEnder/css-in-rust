@@ -1,7 +1,7 @@
 #[test]
 fn test_whitespace_workaround() {
     let _ = env_logger::builder().is_test(true).try_init();
-    let style = stylist::style! {
+    let style = stylist::generic::style! {
         &.class-a.class-b {
             color: red;
         }

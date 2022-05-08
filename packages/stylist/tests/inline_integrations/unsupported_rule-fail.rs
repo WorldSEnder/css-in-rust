@@ -1,6 +1,6 @@
 fn main() {
     let is_an_expression = "black";
-    let _ = stylist::css! {
+    let _ = stylist::generic::css! {
         @page {
             margin: 1cm;
         }

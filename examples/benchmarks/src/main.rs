@@ -1,5 +1,5 @@
 use gloo::timers::callback::Timeout;
-use stylist::yew::Global;
+use stylist::yew::{css, Global};
 use yew::prelude::*;
 
 use log::Level;
@@ -185,7 +185,7 @@ impl Component for Benchmarks {
     }
 
     fn view(&self, _ctx: &Context<Self>) -> Html {
-        let class = stylist::css!(
+        let class = css!(
             r#"
             display: flex;
             justify-content: center;
@@ -326,7 +326,7 @@ impl Component for App {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let class = stylist::css!(
+        let class = css!(
             r#"
             display: flex;
             justify-content: center;

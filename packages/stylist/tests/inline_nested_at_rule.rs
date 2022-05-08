@@ -2,7 +2,7 @@
 fn test_nested_at_rule() {
     let _ = env_logger::builder().is_test(true).try_init();
     let dynamic_value = "blue";
-    let style = stylist::style! {
+    let style = stylist::generic::style! {
         @supports (display: grid) {
             @media print {
                 background-color: grey;

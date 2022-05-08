@@ -6,13 +6,14 @@ use crate::Style;
 /// A struct that can be used as a source to create a [`Style`](crate::Style) or
 /// [`GlobalStyle`](crate::GlobalStyle).
 ///
-/// This struct is usually created by [`css!`](crate::css) macro.
+/// This struct is usually created by [`css!`](crate::generic::css) macro.
 ///
 /// You can also get a StyleSource instance from a string or a [`Sheet`] by calling `.into()`.
 ///
 /// ```rust
+/// use stylist::generic::css;
 /// use stylist::yew::Global;
-/// use stylist::{css, StyleSource};
+/// use stylist::{Style, StyleSource};
 /// use yew::prelude::*;
 ///
 /// let s: StyleSource = css!("color: red;");

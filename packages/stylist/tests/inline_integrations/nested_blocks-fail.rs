@@ -1,5 +1,5 @@
 fn main() {
-    let _ = stylist::css! {
+    let _ = stylist::generic::css! {
         .outer {
             .inner {
                 background-color: red;

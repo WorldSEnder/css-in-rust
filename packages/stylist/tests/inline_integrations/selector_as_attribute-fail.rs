@@ -1,5 +1,5 @@
 fn main() {
-    let _ = stylist::css! {
+    let _ = stylist::generic::css! {
         looks_like_selector(): blue;
     };
 }

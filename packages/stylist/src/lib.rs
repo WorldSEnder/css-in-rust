@@ -12,9 +12,9 @@
 //!
 //! ### Yew Integration
 //!
-//! To enable yew integration. Enable feature `yew_integration` in `Cargo.toml`.
+//! Enable the `yew_integration` feature in your `Cargo.toml`.
 //!
-//! You can create a style and use it with yew like this:
+//! You can create a styled function component and use it with Yew like this:
 //!
 //! ```rust
 //! use stylist::yew::styled_component;
@@ -26,29 +26,11 @@
 //! }
 //! ```
 //!
-//! ### Procedural Macros
-//!
-//! To create a stylesheet, you can use [`style!`]:
-//!
-//! ```
-//! use stylist::style;
-//!
-//! let style = style!(
-//!     r#"
-//!         background-color: red;
-//!
-//!         .nested {
-//!             background-color: blue;
-//!             width: 100px
-//!         }
-//!     "#
-//! )
-//! .expect("Failed to mount style!");
-//! ```
-//!
 //! ### Style API
 //!
-//! If you want to parse a string into a style at runtime, you can use [`Style::new`]:
+//! If you want to parse a string into a style at runtime, the `parser` feature must be enabled.
+//! Note that you do not need to do this if you use the provided macros to create the css.
+//! You can then use [`Style::new`]:
 //!
 //! ```rust
 //! use stylist::Style;
@@ -120,15 +102,20 @@
 //! ## Features Flags
 //!
 //! - `macros`: Enabled by default, this flag enables procedural macro support.
+//! - `parser`: Enabled by default, this flag enables runtime parsing of strings into Styles.
 //! - `random`: Enabled by default, this flag uses `fastrand` crate to generate a random class name.
 //!   Disabling this flag will opt for a class name that is counter-based.
 //! - `yew_integration`: This flag enables yew integration, which implements
 //!   [`Classes`](::yew::html::Classes) for [`Style`] and provides a [`Global`](yew::Global)
 //!   component for applying global styles.
+//! - `debug_style_locations`: Enabled by default, this flag adds additional class names when a
+//!   style is used that identify the source location of your css. Not relevant when compiling in
+//!   release mode.
 
 #[cfg(any(feature = "yew_use_media_query", target_arch = "wasm32"))]
 mod arch;
 pub mod ast;
+pub mod generic;
 mod global_style;
 #[cfg_attr(documenting, doc(cfg(feature = "macros")))]
 #[cfg(feature = "macros")]
@@ -147,55 +134,3 @@ pub use style::Style;
 pub use style_src::StyleSource;
 #[doc(inline)]
 pub use stylist_core::{Error, Result};
-/// A procedural macro that parses a string literal or an inline stylesheet into a
-/// [`StyleSource`].
-///
-/// Please consult the documentation of the [`macros`] module for the supported syntax of this
-/// macro.
-///
-/// # Example
-///
-/// ```
-/// use stylist::css;
-/// use stylist::yew::Global;
-/// use yew::prelude::*;
-///
-/// let rendered = html! {<div class={css!("color: red;")} />};
-/// let rendered_global = html! {<Global css={css!("color: red;")} />};
-/// ```
-#[cfg_attr(documenting, doc(cfg(feature = "macros")))]
-#[cfg(feature = "macros")]
-pub use stylist_macros::css;
-/// A procedural macro that parses a string literal or an inline stylesheet into a
-/// [`GlobalStyle`].
-///
-/// Please consult the documentation of the [`macros`] module for the supported syntax of this
-/// macro.
-///
-/// # Example
-///
-/// ```
-/// use stylist::global_style;
-///
-/// // Returns a GlobalStyle instance.
-/// let style = global_style!("color: red;");
-/// ```
-#[cfg_attr(documenting, doc(cfg(feature = "macros")))]
-#[cfg(feature = "macros")]
-pub use stylist_macros::global_style;
-/// A procedural macro that parses a string literal or an inline stylesheet into a [`Style`].
-///
-/// Please consult the documentation of the [`macros`] module for the supported syntax of this
-/// macro.
-///
-/// # Example
-///
-/// ```
-/// use stylist::style;
-///
-/// // Returns a Style instance.
-/// let style = style!("color: red;");
-/// ```
-#[cfg_attr(documenting, doc(cfg(feature = "macros")))]
-#[cfg(feature = "macros")]
-pub use stylist_macros::style;
