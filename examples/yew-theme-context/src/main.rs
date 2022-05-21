@@ -1,4 +1,4 @@
-use stylist::yew::{styled_component, Global};
+use stylist::yew::{css, styled_component, Global};
 use yew::prelude::*;
 
 use log::Level;
@@ -25,7 +25,7 @@ pub fn inside() -> Html {
 
     html! {
         <div>
-            <button class={css!(r#"color: white;
+            <button class={style!(r#"color: white;
                 height: 50px;
                 width: 300px;
                 font-size: 20px;
@@ -71,7 +71,7 @@ pub fn app() -> Html {
                 ft_color = theme.font_color.clone(),
             )} />
             <h1>{"Yew Theming w/ Context"}</h1>
-            <div class={css!(
+            <div class={style!(
                 r#"
                     box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.7);
                     height: 500px;

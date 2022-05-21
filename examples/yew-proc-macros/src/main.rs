@@ -1,4 +1,4 @@
-use stylist::yew::{styled_component, Global};
+use stylist::yew::{css, styled_component, Global};
 use yew::prelude::*;
 
 use log::Level;
@@ -6,7 +6,7 @@ use log::Level;
 #[styled_component(Inside)]
 pub fn inside() -> Html {
     html! {
-        <div class={css!(r#"
+        <div class={style!(r#"
             width: 200px;
             height: 200px;
             border-radius: 5px;
@@ -46,7 +46,7 @@ pub fn app() -> Html {
                 }
             "#)} />
             <h1>{"Yew Procedural Macros Example"}</h1>
-            <div class={css!(r#"
+            <div class={style!(r#"
                 box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.7);
                 height: 500px;
                 width: 500px;

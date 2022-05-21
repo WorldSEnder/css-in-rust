@@ -28,7 +28,7 @@ pub fn app() -> Html {
                     }
                 "# />
             <h1>{"Use Media Query Example"}</h1>
-            <div class={css!(r#"
+            <div class={style!(r#"
                 box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.7);
                 height: 500px;
                 width: 500px;

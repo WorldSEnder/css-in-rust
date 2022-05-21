@@ -46,12 +46,13 @@ pub fn styled_component_impl_impl(item: HookLike) -> syn::Result<TokenStream> {
     let mgr_ident = Ident::new("__stylist_style_manager__", Span::mixed_site());
     let macro_tokens = quote! {
         #[allow(unused_macros)]
-        macro_rules! css {
+        macro_rules! style {
             ($( $args:tt )*) => {
-                ::stylist::generic::css!($($args)*).with_manager({
+                ::stylist::Style::new_with_manager(
+                    ::stylist::generic::css!($($args)*),
                     #[allow(clippy::redundant_clone)]
-                    #mgr_ident.clone()
-                })
+                    #mgr_ident.clone(),
+                ).unwrap()
             }
         }
     };

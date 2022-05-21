@@ -22,7 +22,7 @@
 //!
 //! #[styled_component(MyStyledComponent)]
 //! fn my_styled_component() -> Html {
-//!     html! {<div class={css!("color: red;")}>{"Hello World!"}</div>}
+//!     html! {<div class={style!("color: red;")}>{"Hello World!"}</div>}
 //! }
 //! ```
 //!

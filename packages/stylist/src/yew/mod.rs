@@ -4,8 +4,8 @@ use yew::html::{Classes, IntoPropValue};
 
 /// A procedural macro to style a function component.
 ///
-/// Specifically this introduces a specialized [`css!`] macro
-/// that is aware of the contextual style manager.
+/// Specifically this introduces a specialized [`css!`] macro, available as `style!`, that is
+/// aware of the contextual style manager.
 ///
 /// For detailed arguments and usage see also the underlying
 /// [`function_component`](::yew::function_component) attribute in Yew.
@@ -20,7 +20,7 @@ use yew::html::{Classes, IntoPropValue};
 ///
 /// #[styled_component(MyStyledComponent)]
 /// fn my_styled_component() -> Html {
-///     html! {<div class={css!("color: red;")}>{"Hello World!"}</div>}
+///     html! {<div class={style!("color: red;")}>{"Hello World!"}</div>}
 /// }
 /// ```
 ///
@@ -37,10 +37,10 @@ pub use stylist_macros::styled_component;
 ///
 /// [`styled_component`] is implemented in terms of this, prefer that if possible.
 /// If you need to use [`function_component`](::yew::function_component) directly
-/// but still inject the contextual `css!` macro, use this.
+/// but still inject the contextual `style!` macro, use this.
 ///
 /// You can also use the attribute on functions that have access to [Hooks] to enable
-/// the usage of a contextual `css!` in their body.
+/// the usage of a contextual `style!` in their body.
 ///
 /// # Example:
 ///
@@ -53,7 +53,7 @@ pub use stylist_macros::styled_component;
 /// #[styled_component_impl]
 /// #[function_component(MyStyledComponent)]
 /// fn my_styled_component() -> Html {
-///     html! {<div class={css!("color: red;")}>{"Hello World!"}</div>}
+///     html! {<div class={style!("color: red;")}>{"Hello World!"}</div>}
 /// }
 /// ```
 ///
