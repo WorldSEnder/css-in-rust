@@ -4,7 +4,7 @@ use yew::html::{Classes, IntoPropValue};
 
 /// A procedural macro to style a function component.
 ///
-/// Specifically this introduces a specialized [`css!`] macro, available as `style!`, that is
+/// Specifically this introduces a specialized [`style!`] macro, available as `style!`, that is
 /// aware of the contextual style manager.
 ///
 /// For detailed arguments and usage see also the underlying
@@ -33,11 +33,12 @@ use yew::html::{Classes, IntoPropValue};
 #[cfg(feature = "macros")]
 pub use stylist_macros::styled_component;
 
-/// A procedural macro to use a specialized, contextual [`css!`](crate::generic::css) macro.
+/// A procedural macro to use a specialized, contextual [`style!`](crate::generic::style)
+/// macro.
 ///
 /// [`styled_component`] is implemented in terms of this, prefer that if possible.
 /// If you need to use [`function_component`](::yew::function_component) directly
-/// but still inject the contextual `style!` macro, use this.
+/// but still want to inject the contextual `style!` macro, use this.
 ///
 /// You can also use the attribute on functions that have access to [Hooks] to enable
 /// the usage of a contextual `style!` in their body.
@@ -85,7 +86,21 @@ pub use stylist_macros::styled_component_impl;
 #[cfg(feature = "yew_use_style")]
 pub use stylist_macros::use_style;
 
-#[doc(inline)]
+/// A procedural macro that parses a string literal or an inline stylesheet into a
+/// [`StyleSource`](crate::StyleSource).
+///
+/// Please consult the documentation of the [`macros`](crate::macros) module for the supported
+/// syntax of this macro.
+///
+/// # Example
+///
+/// ```
+/// use stylist::yew::{css, Global};
+/// use yew::prelude::*;
+///
+/// let rendered = html! {<div class={css!("color: red;")} />};
+/// let rendered_global = html! {<Global css={css!("color: red;")} />};
+/// ```
 pub use crate::generic::css;
 
 use crate::ast::Sheet;

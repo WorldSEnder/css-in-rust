@@ -12,11 +12,8 @@
 ///
 /// ```
 /// use stylist::generic::css;
-/// use stylist::yew::Global;
-/// use yew::prelude::*;
 ///
-/// let rendered = html! {<div class={css!("color: red;")} />};
-/// let rendered_global = html! {<Global css={css!("color: red;")} />};
+/// let style_source = css!("color: red;");
 /// ```
 #[cfg_attr(documenting, doc(cfg(feature = "macros")))]
 #[cfg(feature = "macros")]
